@@ -9,6 +9,8 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.home.rhounsell.example.dropdownlistitem.R;
+import com.home.rhounsell.example.dropdownlistitem.model.VaccinationYear;
+import com.home.rhounsell.example.dropdownlistitem.model.Vaccine;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,19 +21,20 @@ import java.util.List;
 
 public class ExpandableListAdapter  extends BaseExpandableListAdapter {
     private Context context;
-    private List<String> listDataHeader;
-    private HashMap<String, List<String>> listDataChild;
+    private List<VaccinationYear> listDataHeader;
+    private HashMap<Long, List<Vaccine>> listDataChild;
 
-    public ExpandableListAdapter(Context context, List<String> listDataHeader,
-                                  HashMap<String, List<String>>listDataChild){
+    public ExpandableListAdapter(Context context, List<VaccinationYear> listDataHeader,
+                                  HashMap<Long, List<Vaccine>>listChild){
         this.context = context;
         this.listDataHeader = listDataHeader;
-        this.listDataChild = listDataChild;
+        this.listDataChild = listChild;
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return this.listDataChild.get(this.listDataHeader.get(groupPosition)).get(childPosition);
+
+        return listDataChild.get(listDataHeader.get(groupPosition).getYear()).get(childPosition);
     }
     @Override
     public int getGroupCount() {
@@ -40,7 +43,7 @@ public class ExpandableListAdapter  extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return listDataChild.get(listDataHeader.get(groupPosition)).size();
+        return listDataChild.get(listDataHeader.get(groupPosition).getYear()).size();
     }
 
     @Override
@@ -65,7 +68,7 @@ public class ExpandableListAdapter  extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View view, ViewGroup viewGroup) {
-        String headerTitle= (String) getGroup(groupPosition);
+        String headerTitle= String.valueOf(((VaccinationYear) getGroup(groupPosition)).getYear());
         if(view==null){
             LayoutInflater inflater = (LayoutInflater) context.
                     getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -80,13 +83,20 @@ public class ExpandableListAdapter  extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View view, ViewGroup parent) {
-        final String childText=(String) getChild(groupPosition,childPosition);
+        final String childText=((Vaccine) getChild(groupPosition,childPosition)).getVaccineName();
+        final String childDate=((Vaccine) getChild(groupPosition, childPosition)).getVaccineDate();
+        final String childApplied=((Vaccine) getChild(groupPosition, childPosition)).getVaccineApplied();
         if(view == null){
             LayoutInflater inflater= (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.list_item, null);
         }
         TextView txtListChild= (TextView) view.findViewById(R.id.lbl_list_item);
+        TextView txtChildDate = (TextView) view.findViewById(R.id.lbl_date);
+        TextView txtChildApplied= (TextView) view.findViewById(R.id.lbl_applied);
+
         txtListChild.setText(childText);
+        txtChildDate.setText(childDate);
+        txtChildApplied.setText(childApplied);
         return view;
     }
 

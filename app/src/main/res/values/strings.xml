@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Dropdown List Item</string>
+    <string name="date_hint">00-00-00</string>
 </resources>
